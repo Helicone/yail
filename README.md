@@ -1,12 +1,12 @@
 # DRAFT - V0 (08/02/2023)
 
-# yail - Yet Another AI Logger
+# YAIL - Yet Another AI Logger
 
-Let's create 1 logger to rule them all.
+Introducing a universal logger to streamline all AI operations.
 
 # Proposal
 
-Let's define a single normalization schema and pattern to represent queries to LLMs so that they can be easily logged, monitored, debugged and captured. And let's all share it and keep it up to date as new models and providers come onto the market.
+Our goal is to establish a single normalization schema and pattern to streamline queries to Language Learning Models (LLMs) for simplified logging, monitoring, debugging, and capturing. As the AI landscape evolves with new models and providers, we commit to keeping this schema up-to-date and shared among all stakeholders.
 
 # Philosophy
 
@@ -14,29 +14,26 @@ I think the way we beat this and make sure we don't get swallowed up by larger c
 
 # User Experience
 
-Typically it is best to understand how this will impact our users and make their lives better...
+Our priority lies in enhancing our users' experience. Here's a glimpse of a typical user interaction:
 
 ```python
 from langchain import lc_loggers # Llama Index | Gaurdrails | AutoGPT
 from helicone import HeliconeLogger # PromptLayer | HoneyHive | LangFuse
-
 
 lc_loggers.push(HeliconeLogger("api_key"))
 ```
 
 ## Problem
 
-There are a ton of different ways people are interfacing with these apps, let's generate a unified standard to log completions for all inference calls.
+With a myriad of interfacing methods across AI apps, it's crucial to create a unified standard for logging completions of all inference calls, promoting standardization and ease of use.
 
 ## Basics
 
-At it's most fundamental level there is some input, and output that needs to be captured and pushed upwards to a logger.
+At its core, YAIL aims to capture inputs and outputs efficiently, pushing this crucial data to a logger for further analysis.
 
-## Schema V0 proposal
+## Schema V0 Proposal
 
-I am going to use python, but this schema will use design patterns found in most programming languages.
-
-Let's keep the interface as simple as possible like this. Then let's build mappers/decorators and whatever else is needed to get the data to fit this.
+We leverage Python for our proposed schema, but the design patterns used can be found in most programming languages, making this proposal widely applicable. Our focus is on simplicity, and we'll build mappers/decorators as needed to fit the data.
 
 Main interface:
 
@@ -48,7 +45,7 @@ def log_response(response: YAILResponse) -> YAILResponseResult:
     pass
 ```
 
-Possible Request implementation
+Possible Request implementation:
 
 ```python
 @abc
@@ -60,7 +57,7 @@ class YAILInputs:
         raise UnimplementedError()
 
 class OpenAIInputs(YAILInputs):
-    pass # TODO implementation for OpenAI inputs
+    pass # Implementation for OpenAI inputs pending
 
 @dataclass
 class YAILRequest:
@@ -68,31 +65,28 @@ class YAILRequest:
         pass
 ```
 
-Possible ux for base packages
+Potential user experience for base packages:
 
 ```python
-from yail import openai # we can copy Helicone or PromptLayer's implementation here
+from yail import openai # Helicone or PromptLayer's implementation can be utilized
 from yail import loggers
 
 loggers.push(HeliconeLogger) # Or any other logger
 ```
 
-## Where it get's complex
+## Complexities
 
-Streaming:
-When requests are being streamed there is a lot of different implementations and the actual packets look different. Normalizing the body into one unified string and representing that correctly when `log_response` is called can be tricky. We also want to make sure we log any partially received data if the stream falls off.
+- **Streaming:** For streaming requests with varying implementations, we aim to normalize the body into a unified string, accurately representing it during the `log_response` call. We also prioritize logging partially received data in the event of stream disconnection.
 
-Large payloads:
-With Clause we are already getting 100k tokens and soon will have possibly 1 Million + tokens by the end of the year and we are talking about mega bytes of data. Many serverless providers restrict payloads larger than 4mbs, and we should be cautious about this and build our loggers in a way that we can chunk data
+- **Large payloads:** As we handle large data volumes, with expectations of 1 Million + tokens by the end of the year, we recognize that many serverless providers restrict payloads larger than 4MBs. Thus, our loggers will be built to chunk data accordingly.
 
-Webhooks for responses:
-For replicate and other providers sometimes the response is sent back within a webhook. We should provide tooling and instrumentation to link the request and response in cases where the `request_id` that links the two is not within the same stack frame when the response is captured.
+- **Webhooks for responses:** In cases where providers like Replicate send back responses within a webhook, we're developing tools to link requests and responses even when the `request_id` linking them is not within the same stack frame when capturing the response.
 
-## Extensions with Vistors
+## Extensions with Visitors
 
-For many loggers we want to be able to extend the schema and send our own meta data. We each logger should be able to provide a vistor that can be attached to the logger.
+To extend the schema and send custom metadata, each logger should be able to provide a visitor that can be attached to the logger.
 
-Possible ux can look like...
+The user experience could look like this:
 
 ```python
 from yail import openai
@@ -100,7 +94,7 @@ openai.ChatCompletion.create(
     model=model,
     messages=chat_log,
     temperature=0.7,
-    yail_visit= lambda a: pass # Do something like append your own custom meta data sent to the logger
+    yail_visit= lambda a: pass # Append custom meta data sent to the logger
 )
 ```
 
@@ -110,9 +104,13 @@ or for the LangChain...
 chat = ChatOpenAI(temperature=0, yail_visit= lambda a: pass)
 ```
 
-## Why should we get onboard
+## Why You Should Get Onboard
 
-## Who we should get onboard
+Participation in this project offers several benefits. You can contribute to the development of a standard that will shape the future of AI logging. This allows for better intercommunication between different platforms and streamlines the process of handling various AI models. By working together, we can keep up with the rapid changes in AI technology and maintain our competitiveness against larger corporations.
+
+## Who We Should Get Onboard
+
+We aim to bring together various stakeholders in the AI field, including loggers, providers, and libraries. Here are a few we have identified:
 
 | Loggers | Helicone | PromptLayer | HoneyHive |
 | ------- | -------- | ----------- | --------- |
@@ -122,3 +120,5 @@ chat = ChatOpenAI(temperature=0, yail_visit= lambda a: pass)
 
 | Libraries | LangChain | LlamaIndex | GaurdRails |
 | --------- | --------- | ---------- | ---------- |
+
+We believe that these entities, with their unique strengths and capabilities, can contribute significantly to the development and success of YAIL. We look forward to fostering a dynamic and diverse community around this project.
