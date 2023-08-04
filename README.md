@@ -6,7 +6,7 @@ Introducing a universal logger to streamline all AI operations.
 
 # Proposal
 
-Our goal is to establish a single normalization schema and pattern to streamline queries to Language Learning Models (LLMs) for simplified logging, monitoring, debugging, and capturing. As the AI landscape evolves with new models and providers, we commit to keeping this schema up-to-date and shared among all stakeholders.
+Our goal is to establish a single normalization schema and pattern to streamline queries to Large Language Models (LLMs) for simplified logging, monitoring, debugging, and capturing. As the AI landscape evolves with new models and providers, we commit to keeping this schema up-to-date and shared among all stakeholders.
 
 # Philosophy
 
